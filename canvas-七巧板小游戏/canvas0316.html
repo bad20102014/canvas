@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas-七巧板</title>
+	<style>
+		canvas{
+			display: block;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script type="text/javascript">
+		var footerscale=0.25,ismove=false;
+		var startp={};
+		var tangram=[
+			{sp:{x:50,y:475},np:{x:0,y:475},fp:{x:200,y:0},dot:[{dx:+400,dy:+0},{dx:+200,dy:+200}],color:"#caff67",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:150,y:475},np:{x:120,y:475},fp:{x:400,y:200},dot:[{dx:+100,dy:+100},{dx:+0,dy:+200},{dx:-100,dy:+100}],color:"#a54c09",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:250,y:475},np:{x:240,y:475},fp:{x:300,y:300},dot:[{dx:+100,dy:+100},{dx:-100,dy:+100}],color:"#fa8ccc",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:350,y:475},np:{x:360,y:475},fp:{x:600,y:200},dot:[{dx:+0,dy:+200},{dx:-200,dy:+200}],color:"#f6ca29",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:450,y:475},np:{x:480,y:475},fp:{x:600,y:0},dot:[{dx:+0,dy:+200},{dx:-100,dy:+300},{dx:-100,dy:+100}],color:"#ef3d61",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:550,y:475},np:{x:600,y:475},fp:{x:500,y:100},dot:[{dx:+0,dy:+200},{dx:-100,dy:+100}],color:"#f9f51a",isscale:true,ismove:false,isimportant:false},
+			{sp:{x:650,y:475},np:{x:720,y:475},fp:{x:200,y:0},dot:[{dx:+200,dy:+200},{dx:+0,dy:+400}],color:"#67becf",isscale:true,ismove:false,isimportant:false}
+		]
+
+		window.onload=function(){
+			var canvas=document.getElementById("canvas");
+			var ctx=canvas.getContext("2d");
+			canvas.width=800;
+			canvas.height=800;
+			canvas.globalCompositeOperation="source-over"
+			setInterval(function(){
+				draw(ctx);
+			},40)
+			canvas.addEventListener('mousedown', function(e){
+				 e.preventDefault();
+				 startp = getEventPosition(e);
+				 var isok=true;
+				for (var i = 0; i <tangram.length; i++) {
+						var piece=tangram[i];
+						var piece=tangram[i],scale;
+						if(piece.isscale){
+							scale=footerscale;
+						}else{
+							scale=1;
+						}
+						ctx.save();
+						ctx.beginPath();
+						ctx.moveTo(piece.np.x,piece.np.y);
+						for(j=0;j<piece.dot.length;j++){
+						ctx.lineTo(piece.np.x+(piece.dot[j].dx*scale),piece.np.y+(piece.dot[j].dy*scale));
+						}
+						ctx.closePath();
+						if(ctx.isPointInPath(startp.x,startp.y)){
+							piece.isscale=false;
+							
+							piece.sp.x=piece.np.x;
+							piece.sp.y=piece.np.y;
+							if(isok){
+								piece.isimportant=true;
+								piece.ismove=true;
+								isok=false;
+							}
+						}
+						ctx.restore();
+						
+				}
+				})
+			canvas.addEventListener("mousemove",function(e){
+				e.preventDefault();
+				var nowp = getEventPosition(e);
+				
+					var _dx=nowp.x-startp.x;
+					var _dy=nowp.y-startp.y;
+					for (var i = 0; i <tangram.length; i++) {
+					var piece=tangram[i];
+					if(piece.ismove){
+						ctx.save();
+						ctx.beginPath();
+						ctx.moveTo(piece.np.x,piece.np.y);
+						for(j=0;j<piece.dot.length;j++){
+						ctx.lineTo(piece.np.x+(piece.dot[j].dx),piece.np.y+(piece.dot[j].dy));
+						}
+						ctx.closePath();
+						if(ctx.isPointInPath(nowp.x,nowp.y)){
+							piece.np.x=piece.sp.x+_dx;
+							piece.np.y=piece.sp.y+_dy;
+						}
+						ctx.restore();
+					}
+				}
+
+			})
+			canvas.addEventListener("mouseup",function(e){
+				e.preventDefault();
+				var iswin=true;
+				for (var i = 0; i <tangram.length; i++) {
+					var piece=tangram[i];
+					piece.ismove=false;
+					piece.isimportant=false;
+					if (piece.np.y>=350) {
+						piece.np.x=i*120;
+						piece.np.y=475;
+						piece.isscale=true;
+					}
+					if(Math.abs(piece.np.x-piece.fp.x)<15&&Math.abs(piece.np.y-piece.fp.y)<15){
+						piece.np.x=piece.fp.x;
+						piece.np.y=piece.fp.y;
+					}
+					if(piece.np.x!=piece.fp.x||piece.np.y!=piece.fp.y){
+						iswin=false;
+					}
+				}
+				if(iswin){
+					alert("恭喜您赢了");
+				}
+			})
+		}
+		function draw(ctx){
+			var tmp={};
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+			ctx.beginPath();
+			ctx.rect(200,0,400,400);
+			ctx.lineWidth=1;
+			ctx.strokeStyle="#000";
+			ctx.closePath();
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,450);
+			ctx.lineTo(800,450);
+			ctx.stroke();
+			for (var i = 0; i <tangram.length; i++) {
+					var piece=tangram[i],scale;
+					if(piece.isscale){
+						scale=footerscale;
+					}else{
+						scale=1;
+					}
+					if(!piece.isimportant){
+						ctx.save();
+						ctx.beginPath();
+						ctx.moveTo(piece.np.x,piece.np.y);
+						for(j=0;j<piece.dot.length;j++){
+						ctx.lineTo(piece.np.x+(piece.dot[j].dx*scale),piece.np.y+(piece.dot[j].dy*scale));
+						}
+						ctx.closePath();
+						ctx.strokeStyle="#333";
+						ctx.stroke();
+						ctx.fillStyle=piece.color;
+						ctx.fill();
+						ctx.restore();
+					}else{
+						tmp=piece;
+					}
+				}
+				if(isnullobj(tmp)){
+
+						ctx.save();
+						ctx.beginPath();
+						ctx.moveTo(tmp.np.x,tmp.np.y);
+						for(j=0;j<tmp.dot.length;j++){
+						ctx.lineTo(tmp.np.x+(tmp.dot[j].dx),tmp.np.y+(tmp.dot[j].dy));
+						}
+						ctx.closePath();
+						ctx.strokeStyle="#333";
+						ctx.stroke();
+						ctx.fillStyle=tmp.color;
+						ctx.fill();
+						ctx.restore();
+				}
+				
+			}
+			function getEventPosition(ev){
+				  var x, y;
+				  if (ev.layerX || ev.layerX == 0) {
+				    x = ev.layerX;
+				    y = ev.layerY;
+				  } else if (ev.offsetX || ev.offsetX == 0) { // Opera
+				    x = ev.offsetX;
+				    y = ev.offsetY;
+				  }
+				  return {x: x, y: y};
+			}
+			function drawfooter(ctx){
+			for (var i = 0; i <tangram.length; i++) {
+				var piece=tangram[i];
+					ctx.beginPath();
+					ctx.moveTo(piece.p[0].x,piece.p[0].y);
+					for(j=1;j<piece.p.length;j++){
+					ctx.lineTo(piece.p[j].x,piece.p[j].y);
+					}
+					ctx.closePath();
+					ctx.strokeStyle="#333";
+					ctx.stroke();
+					ctx.fillStyle=piece.color;
+					ctx.fill();
+				}
+			}
+			function isnullobj(obj) {
+				if (typeof obj === "object" && !(obj instanceof Array)){  
+				    var hasProp = false;  
+				    for (var prop in obj){  
+				        hasProp = true;  
+				        break;  
+				    }  
+				    if (hasProp){  
+				        return true;  
+				    }else{  
+				        
+				        return false;  
+				    }  
+				} 
+			}
+		</script>
+</body>
+</html>

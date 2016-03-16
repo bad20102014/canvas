@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	html,body{
+		height: 100%;
+    width: 100%;
+	}
+	canvas{
+		display: block;
+		margin: auto;
+		position: absolute;
+		left:0;
+		right:0;
+		top:0;
+		bottom:0;
+		border: 1px solid;
+	}
+	</style>
+</head>
+<body style="position: relative;">
+	<canvas id="canvas" ></canvas>
+</body>
+<script type="text/javascript">
+var circle={x:400,y:200,R:50,vx:Math.random()*5+10,vy:Math.random()*5+10}
+	window.onload=function(){
+		var canvas=document.getElementById("canvas");
+		canvas.width=400;
+		canvas.height=400;
+		var ctx =canvas.getContext("2d");
+		setInterval(function(){
+			draw(ctx);
+			update(canvas.width,canvas.height);
+		},
+		40);
+		
+	}
+	function draw(ctx) {
+		var canvas=ctx.canvas;
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle="black";
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+
+		ctx.beginPath();
+		ctx.fillStyle="#fff";
+		ctx.arc(circle.x,circle.y,circle.R,0,2*Math.PI);
+		ctx.fill();
+		ctx.clip();
+		ctx.fillStyle="#333";
+		ctx.font="bold 22px SimSun";
+		ctx.textAlign="center";
+		ctx.fillText("canvas",canvas.width/2,150);
+		ctx.fillText("canvas",canvas.width/2,200);
+		ctx.fillText("canvas",canvas.width/2,250);
+		ctx.restore();
+	}
+	function update(cw,ch) {
+		circle.x+=circle.vx;
+		circle.y+=circle.vy;
+		if(circle.x-circle.R<=0){
+			circle.vx=-circle.vx;
+			circle.x=circle.R;
+		}
+		if(circle.x+circle.R>=cw){
+			circle.vx=-circle.vx;
+			circle.x=cw-circle.R;
+		}
+		if(circle.y-circle.R<=0){
+			circle.vy=-circle.vy;
+			circle.y=circle.R;
+		}
+		if(circle.y+circle.R>=ch){
+			circle.vy=-circle.vy;
+			circle.y=ch-circle.R;
+		}
+	}
+</script>
+</html>
