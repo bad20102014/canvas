@@ -67,7 +67,7 @@
 						ctx.restore();
 						
 				}
-				})
+				}，false)
 			canvas.addEventListener("mousemove",function(e){
 				e.preventDefault();
 				var nowp = getEventPosition(e);
@@ -92,7 +92,7 @@
 					}
 				}
 
-			})
+			},false)
 			canvas.addEventListener("mouseup",function(e){
 				e.preventDefault();
 				var iswin=true;
@@ -116,7 +116,7 @@
 				if(iswin){
 					alert("恭喜您赢了");
 				}
-			})
+			},false)
 		}
 		function draw(ctx){
 			var tmp={};
