@@ -8,7 +8,15 @@
 			width: 800px;
 			height: 600px;
 			position: relative;
-			margin: 0 auto;
+			float: left;
+		}
+		.tipwrap{
+			float: left;
+			width: 400px;
+			margin-left: 50px;
+		}
+		.tipwrap ul{
+			list-style: none;
 		}
 		#canvas1,#canvas2{
 			position: absolute;
@@ -25,11 +33,32 @@
 	<script src="js/bigfish.js"></script>
 	<script src="js/fruit.js"></script>
 	<script src="js/fish.js"></script>
+	<script src="js/collision.js"></script>
+	<script src="js/score.js"></script>
+	<script src="js/wave.js"></script>
+
 </head>
 <body>
 <div class="canvaswrap">
 		<canvas id="canvas1" width="800" height="600"></canvas>
 		<canvas id="canvas2" width="800" height="600"></canvas>
+</div>
+<div class="tipwrap">
+<h1>小鱼等级（越往下越高级）游戏开始时只能吃浮游物，</h1>
+	<ul>
+		<li>
+		<img src="src/fish31.png" alt="">
+		</li>
+				<li>
+		<img src="src/fish41.png" alt="">
+		</li>
+				<li>
+		<img src="src/fish51.png" alt="">
+		</li>
+						<li>
+		<img src="src/fish61.png" alt="">
+		</li>
+	</ul>
 </div>
 </body>
 </html>
